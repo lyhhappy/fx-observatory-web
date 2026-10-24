@@ -1,0 +1,1 @@
+import {AdminPanel} from '@/components/AdminPanel';import {mode} from '@/lib/store';export const dynamic='force-dynamic';export const metadata={title:'私有反馈管理',robots:{index:false,follow:false}};export default function Admin(){return <AdminPanel cloud={mode()==='supabase'}/>}

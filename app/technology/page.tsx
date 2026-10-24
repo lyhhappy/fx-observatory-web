@@ -1,0 +1,10 @@
+import {Workflow} from '@/components/Workflow';
+import {Screenshot} from '@/components/Gallery';
+export const metadata={title:'技术实现'};
+export default function Technology(){return <div className="wrap"><div className="page-intro"><p className="breadcrumb">首页 / 技术实现</p><h1>一条提醒，经过哪些步骤？</h1><p>从数据来源到通知结果，让工程实现有迹可循。</p></div><Workflow/><div className="gallery-panel"><Screenshot src="/images/workflow.png" alt="原应用 Agent 流程界面" caption="2026年10月21日历史工作流截图，不表示本轮重新联网验证。"/></div>
+ <section className="section"><h2>规则负责稳定判断，模型提供结构化说明。</h2><div className="tech-grid">{[['Python / PySide6','桌面界面与后台任务'],['HTTPX','官方当前及历史报价采集'],['LangGraph','编排采集、计算、阈值与说明'],['SQLite','持久化比较、预警和通知状态']].map(([title,body])=><article key={title}><h3>{title}</h3><p>{body}</p></article>)}</div></section>
+ <section className="section"><h2>边界，也说清楚。</h2><div className="detail-features technology-boundaries">
+  <details open><summary>数据与时效</summary><div className="boundary-copy"><p>应用读取农业银行公开的当前与历史现汇牌价，默认每 60 秒检查一次。银行发布时间说明报价何时发布，程序检查时间说明应用何时完成本次读取；程序正在检查，并不意味着银行一定发布了新价格。</p><p>历史基准可选择昨天、上一个法定工作日或指定日期。比较时取目标日期最后一条有效的同方向报价，统一换算为“人民币 / 1 单位外币”，分别比较现汇买入与卖出，避免混用方向或价格单位。</p><p>如果当前或历史报价缺失，或当前报价时间不晚于基准报价，相关方向会暂停比较，并显示原因。工作日日历目前覆盖 2025、2026 年，用于选择日期，不代表银行当天一定有报价；未覆盖年份需要更新日历后才能使用该工作日比较方式。</p></div></details>
+  <details><summary>AI 与提醒</summary><div className="boundary-copy"><p>是否达到提醒线由确定的计算规则决定：先计算相对于历史基准的涨跌幅，再用涨跌幅绝对值与该方向的阈值比较，达到或超过阈值即可命中。例如当前价 0.84894、基准价 0.85003 时，跌幅约 0.1282%，会达到 0.1% 的提醒线。</p><p>模型在规则确认事实之后生成说明，不能自行改写价格、日期或触发依据。输出会经过结构与事实字段校验；遇到超时、请求失败或内容不符时，使用规则说明兜底。这样既能解释“为什么提醒”，也能让模型状态与规则判断分开呈现。</p><p>AI 助手围绕本机已有行情和记录查询信息，监控修改先形成提案，由用户确认后保存。提醒后还需要重新设置相应方向的提醒线；选择稍后处理时，该方向会暂停报警。这里展示的是已有数据的比较与说明，不提供未来汇率预测或自动交易。</p></div></details>
+  <details><summary>运行条件</summary><div className="boundary-copy"><p>当前应用面向 Windows 64 位桌面环境。下载后需要完整解压，保留 EXE 同目录的 _internal 文件夹；打包程序已包含运行环境，使用者无需另外安装 Python。行情采集和模型请求需要可用网络，运行记录则保存在本机。</p><p>监控依赖桌面程序保持运行。关闭窗口即退出，不包含托盘常驻或独立后台服务；电脑休眠、断网等情况也会影响后续采集。重新打开程序后，需要点击“开始监控”继续检查，不能把关窗后的时间视为持续监控。</p><p>桌面通知与可选邮件分别记录提交状态。邮件需要用户配置 SMTP 服务与授权码，并通过测试提醒核对实际收件；“已提交”不等于已到收件箱或已阅读。当前没有移动端版本，也不包含自动交易功能。</p></div></details>
+ </div></section></div>}

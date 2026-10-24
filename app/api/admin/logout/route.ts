@@ -1,0 +1,1 @@
+import {NextResponse} from 'next/server';import {sameOrigin} from '@/lib/auth';export async function POST(request:Request){if(!sameOrigin(request))return new Response(null,{status:403});const response=NextResponse.json({ok:true});response.cookies.set('fx_admin','',{httpOnly:true,sameSite:'strict',secure:!!process.env.VERCEL,path:'/',maxAge:0});return response;}

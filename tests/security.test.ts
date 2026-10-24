@@ -1,0 +1,3 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {sameOrigin} from '../lib/origin.ts';
+test('来源校验使用实际Host，允许框架内部localhost URL',()=>{assert(sameOrigin(new Request('http://localhost:3000/api/feedback',{headers:{Host:'127.0.0.1:3000',Origin:'http://127.0.0.1:3000'}})));});
+test('其他来源及缺少来源均拒绝',()=>{assert(!sameOrigin(new Request('http://localhost:3000/api/feedback',{headers:{Origin:'https://bad.invalid'}})));assert(!sameOrigin(new Request('http://localhost:3000/api/feedback')));});

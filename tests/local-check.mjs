@@ -1,0 +1,20 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import {DatabaseSync} from 'node:sqlite';
+const base='http://127.0.0.1:3000';
+const request=(url,options={})=>fetch(base+url,{...options,headers:{Origin:base,'Content-Type':'application/json',...options.headers}});
+for(const route of ['/','/showcase','/showcase/monitoring','/showcase/assistant','/showcase/alerts','/technology','/download','/feedback','/admin','/privacy']){const response=await request(route);assert.equal(response.status,200,route);const html=await response.text();assert(html.includes('汇率'));}
+assert.equal((await request('/api/admin/feedback')).status,401);
+assert.equal((await request('/api/feedback',{method:'POST',headers:{Origin:'https://bad.invalid'},body:'{}'})).status,403);
+assert.equal((await request('/api/feedback',{method:'POST',body:JSON.stringify({name:'test',consent:true})})).status,400);
+const env=Object.fromEntries(fs.readFileSync('.env.local','utf8').split(/\r?\n/).filter(Boolean).map(line=>{const i=line.indexOf('=');return [line.slice(0,i),line.slice(i+1)];}));
+const login=await request('/api/admin/login',{method:'POST',body:JSON.stringify({password:env.LOCAL_ADMIN_PASSWORD})});assert.equal(login.status,200);
+const cookie=login.headers.get('set-cookie').split(';')[0];
+const created=await request('/api/feedback',{method:'POST',body:JSON.stringify({name:'本地验收专用',email:'local-check@example.test',experience:'仅用于本地流程验收，检查完成后删除。',consent:true})});assert.equal(created.status,201);
+let list=await (await request('/api/admin/feedback',{headers:{Cookie:cookie}})).json();const record=list.find(row=>row.email==='local-check@example.test');assert(record);
+assert.equal((await request('/api/admin/feedback',{method:'PATCH',headers:{Cookie:cookie},body:JSON.stringify({id:record.id})})).status,200);
+list=await (await request('/api/admin/feedback',{headers:{Cookie:cookie}})).json();assert.equal(list.find(row=>row.id===record.id).status,'done');
+const db=new DatabaseSync('local-data/feedback.sqlite',{readOnly:true});const row=db.prepare('SELECT status,payload FROM feedback WHERE id=?').get(record.id);assert.equal(row.status,'done');db.close();
+assert.equal((await request('/api/admin/feedback',{method:'DELETE',body:JSON.stringify({id:record.id})})).status,401);
+assert.equal((await request('/api/admin/feedback',{method:'DELETE',headers:{Cookie:cookie},body:JSON.stringify({id:record.id})})).status,200);
+list=await (await request('/api/admin/feedback',{headers:{Cookie:cookie}})).json();assert(!list.some(row=>row.id===record.id));
+assert.equal((await request('/api/admin/logout',{method:'POST',headers:{Cookie:cookie}})).status,200);
+console.log('PASS: 10 page routes; feedback validation; cross-origin rejection; private admin; persistent SQLite save; mark done; protected delete; test feedback cleaned.');

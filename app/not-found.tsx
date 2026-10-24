@@ -1,0 +1,1 @@
+import Link from 'next/link';export default function NotFound(){return <div className="wrap section empty"><h1>这个页面暂时不存在。</h1><p>可以返回效果总览，继续了解汇率观察站。</p><Link className="button" href="/showcase">查看应用效果</Link></div>}
