@@ -90,3 +90,9 @@
 .feature-card{transition:border-color .2s,transform .2s,box-shadow .2s}.feature-card:is(:hover,:focus-visible){transform:translateY(-3px);box-shadow:0 7px 20px #194e3210}
 .technology-boundaries .boundary-copy{max-width:1120px;padding:0 40px 26px 0}.boundary-copy p{font-size:16px;line-height:1.95}.boundary-copy p+p{margin-top:14px}
 @media(max-width:560px){.contact-field{grid-template-columns:38px minmax(0,1fr);gap:9px}.technology-boundaries .boundary-copy{padding-right:12px}.boundary-copy p{font-size:15px}.footer-links a{font-size:13px;padding:9px 12px}}
+/* 项目介绍视频：原生播放控件，随容器等比缩放。 */
+.intro-video .section-heading p:not(.eyebrow){margin-top:16px;color:var(--muted);line-height:1.8}
+.intro-video-player{overflow:hidden;border:1px solid var(--line);border-radius:20px;background:#122d32;box-shadow:0 12px 36px #173f5010}
+.intro-video-player video{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;background:#122d32}
+.intro-video>.fine{margin-top:14px}
+@media(max-width:560px){.intro-video-player{border-radius:12px}}
